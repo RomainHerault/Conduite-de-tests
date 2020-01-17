@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+    <!--<link href="/media/css/style.css" rel="stylesheet"/>-->
+
+    <title>{% block title %}Store Manager{% endblock %}</title>
+</head>
+<body>
+<header>{% block header %}Bienvenue, {{username}} !{% endblock %}</header>
+<section id="content">
+    {% block content %}
+    <table>
+        <tr>
+            {% for h in header %}
+            <th>{{h}}</th>
+            {% endfor %}
+        </tr>
+        {% for d in data %}
+        <tr>
+            {% for entry in d %}
+            <th> {{ entry }}</th>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endblock %}
+</section>
+</body>
+</html>
