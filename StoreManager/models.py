@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phonenumber = models.IntegerField()
-
     department = models.ForeignKey('Department', null=None, on_delete=models.CASCADE)
 
 
