@@ -1,15 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
-    <!--<link href="/media/css/style.css" rel="stylesheet"/>-->
-
     <title>{% block title %}Store Manager{% endblock %}</title>
+    <link rel="stylesheet" href="{%static 'StoreManager/css/base.css'%}" type="text/css">
 </head>
 <body>
 <header>{% block header %}Bienvenue, {{username}} !{% endblock %}</header>
 <section id="content">
     {% block content %}
+    <div style="overflow-x:auto;">
     <table>
         <tr>
             {% for h in header %}
@@ -19,12 +19,18 @@
         {% for d in data %}
         <tr>
             {% for entry in d %}
-            <th> {{ entry }}</th>
+            <td> {{ entry }}</td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
+        </div>
     {% endblock %}
+</section>
+<section id="button">
+    <button id='buttonadd'> Add</button>
+    <button id='buttonmodify'> Modify</button>
+    <button id='buttondelete'> Delete</button>
 </section>
 </body>
 </html>
