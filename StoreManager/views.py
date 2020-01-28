@@ -36,6 +36,7 @@ def connexion(request):
 
     return render(request, 'StoreManager/login.html', locals())
 
+
 def deconnexion(request):
     logout(request)
     return redirect(reverse(connexion))
