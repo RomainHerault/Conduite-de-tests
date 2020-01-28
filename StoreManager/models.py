@@ -19,7 +19,7 @@ class Department(models.Model):
 class Store(models.Model):
     name = models.CharField(max_length=150)
 
-    user = models.OneToOneField(Employee, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Product(models.Model):
