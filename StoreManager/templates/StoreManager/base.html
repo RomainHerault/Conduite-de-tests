@@ -7,10 +7,12 @@
 </head>
 <body>
 <header>{% block header %}Bienvenue, {{username}} !{% endblock %}</header>
+<form method="post">
+{% csrf_token %}
 <section id="content">
     {% block content %}
     <div style="overflow-x:auto;">
-    <table>
+    <table >
         <tr>
             {% for h in header %}
             <th>{{h}}</th>
@@ -18,19 +20,24 @@
         </tr>
         {% for d in data %}
         <tr>
-            {% for entry in d %}
-            <td> {{ entry }}</td>
-            {% endfor %}
+            <td><input type="checkbox" name="action_product" value="{{ d.id }}" />&nbsp;</td>
+            <td> <div contenteditable> <input type="text" name="name_product" value={{ d.name }} /> </div> </td>
+            <td> <div contenteditable> {{ d.price }} </div> </td>
+            <td> <div contenteditable> {{ d.quantity }} </div> </td>
+            <td> <div contenteditable> {{ d.ref }} </div> </td>
+            <td> {{ d.department.name }}</td>
         </tr>
         {% endfor %}
     </table>
         </div>
     {% endblock %}
+
 </section>
 <section id="button">
-    <button id='buttonadd'> Add</button>
-    <button id='buttonmodify'> Modify</button>
-    <button id='buttondelete'> Delete</button>
+    <input type="submit" name="add_product" value="Add"/>
+    <input type="submit" name="modify_product" value="Modify"/>
+    <input type="submit" name="delete_product" value="Delete"/>
 </section>
+</form>
 </body>
 </html>
