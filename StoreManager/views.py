@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 from django.urls import reverse
 
-from StoreManager.models import Product
+from StoreManager.models import Product, Department
+from StoreManager.models import Employee
 from . import forms
 
 
@@ -14,10 +15,15 @@ def index(request):
 
 
 def rayon(request):
+    error = False
+    error_message = ""
     if request.method == 'POST' and request.POST.get('add_product'):  # check if post request comes from correct button
-        new_product = Product(name="", quantity=0, ref="", price=0,
+        new_product = Product(name="", quantity=0, ref="", price=0.0,
                               department_id=1)  # TODO dept id à modifier en fonction des droits du user
-        new_product.save()
+        error, error_message = new_product.isNotValid()
+        if not error:
+            new_product.save()
+
     elif request.method == 'POST' and request.POST.get(
             'modify_product'):  # check if post request comes from correct button
 
@@ -33,13 +39,15 @@ def rayon(request):
 
         for product_id in selected_products_id:
 
-            product = Product.objects.get(pk = product_id)
-
+            product = Product.objects.get(pk=product_id)
             product.name = name_products[id_products.index(int(product_id))]
             product.price = price_products[id_products.index(int(product_id))]
             product.quantity = quantity_products[id_products.index(int(product_id))]
             product.ref = ref_products[id_products.index(int(product_id))]
-            product.save()
+
+            error, error_message = product.isNotValid()
+            if not error:
+                product.save()
 
     elif request.method == 'POST' and request.POST.get(
             'delete_product'):  # check if post request comes from correct button
@@ -50,47 +58,52 @@ def rayon(request):
     header = ['Action', 'Nom', 'Prix', 'Quantité', 'Ref', 'Nom Rayon']
     query_results = Product.objects.all()  # TODO à modifier en fonction des droits du user
     return render(request, 'StoreManager/base.html',
-                  {'username': 'Jean Michel', 'header': header, 'data': query_results})
+                  {'username': 'Jean Michel', 'header': header, 'data': query_results, 'error': error,
+                   'error_message': error_message})
 
 
 def departement(request):
-    if request.method == 'POST' and request.POST.get('add_product'):  # check if post request comes from correct button
-        new_product = Product(name="", quantity=0, ref="", price=0,
-                              department_id=1)  # TODO dept id à modifier en fonction des droits du user
-        new_product.save()
+    if request.method == 'POST' and request.POST.get('add_dep'):  # check if post request comes from correct button
+        new_dep = Department(name="", store_id=1)
+        new_dep.save()
     elif request.method == 'POST' and request.POST.get(
-            'modify_product'):  # check if post request comes from correct button
+            'modify_dep'):  # check if post request comes from correct button
 
-        selected_products_id = request.POST.getlist('action_product')
+        selected_dep_id = request.POST.getlist('action_dep')
 
-        id_products = list(Product.objects.values_list('id', flat=True))
-        id_products.sort()
+        id_deps = list(Department.objects.values_list('id', flat=True))
+        id_deps.sort()
 
-        name_products = request.POST.getlist('name_product')
-        price_products = request.POST.getlist('price_product')
-        quantity_products = request.POST.getlist('quantity_product')
-        ref_products = request.POST.getlist('ref_product')
+        dep_name = request.POST.getlist('dep_name')
+        username = request.POST.getlist('username')
 
-        for product_id in selected_products_id:
-
-            product = Product.objects.get(pk = product_id)
-
-            product.name = name_products[id_products.index(int(product_id))]
-            product.price = price_products[id_products.index(int(product_id))]
-            product.quantity = quantity_products[id_products.index(int(product_id))]
-            product.ref = ref_products[id_products.index(int(product_id))]
-            product.save()
+        for dep_id in selected_dep_id:
+            dep = Department.objects.get(pk=dep_id)
+            dep.name = dep_name[id_deps.index(int(dep_id))]
+            dep.save()
 
     elif request.method == 'POST' and request.POST.get(
-            'delete_product'):  # check if post request comes from correct button
+            'delete_dep'):  # check if post request comes from correct button
 
-        selected_products = request.POST.getlist('action_product')  # get id of selected products
-        Product.objects.filter(id__in=selected_products).delete()  # delete selected product
+        selected_dep = request.POST.getlist('action_dep')  # get id of selected products
+        Product.objects.filter(id__in=selected_dep).delete()  # delete selected product
 
-    header = ['Action', 'Nom', 'Prix', 'Quantité', 'Ref', 'Nom Rayon']
-    query_results = Product.objects.all()  # TODO à modifier en fonction des droits du user
+    header = ['Action', 'Departement', 'Employée(s)']
+    query_employee_results = Employee.objects.all().select_related()
+    query_dept = Department.objects.all()
+
+    custom_data = []
+
+    for dept in query_dept:
+        for emp in query_employee_results:
+            if dept.name == emp.department.name:
+                custom_data.append([dept, emp])
+        if custom_data[-1][0].name != dept.name:
+            custom_data.append([dept])
+
     return render(request, 'StoreManager/departement.html',
-                  {'username': 'Jean Michel', 'header': header, 'data': query_results})
+                  {'username': 'Jean Michel', 'header': header, 'data': custom_data})
+
 
 def connexion(request):
     error = False

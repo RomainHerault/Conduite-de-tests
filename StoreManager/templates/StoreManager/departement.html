@@ -20,12 +20,9 @@
         </tr>
         {% for d in data %}
         <tr>
-            <td><input type="checkbox" name="action_product" value="{{ d.id }}" />&nbsp;</td>
-            <td> <div contenteditable> <input type="text" name="name_product" value="{{ d.name }}"> </div> </td>
-            <td> <div contenteditable> <input type="number" name="price_product" value="{{ d.price }}"> </div> </td>
-            <td> <div contenteditable> <input type="number" name="quantity_product" value="{{ d.quantity }}"> </div> </td>
-            <td> <div contenteditable> <input type="text" name="ref_product" value="{{ d.ref }}"> </div> </td>
-            <td> {{ d.department.name }}</td>
+            <td><input type="checkbox" name="action_dep" value="{{ d.0.id }}" />&nbsp;</td>
+            <td> <div contenteditable> <input type="text" name="dep_name" value="{{ d.0.name }}"> </div> </td>
+            <td> <div contenteditable> <input type="text" name="username" value="{{ d.1.user.username }}"> </div> </td>
         </tr>
         {% endfor %}
     </table>
@@ -34,9 +31,9 @@
 
 </section>
 <section id="button">
-    <input type="submit" name="add_product" value="Add"/>
-    <input type="submit" name="modify_product" value="Modify"/>
-    <input type="submit" name="delete_product" value="Delete"/>
+    <input type="submit" name="add_dep" value="Add"/>
+    <input type="submit" name="modify_dep" value="Modify"/>
+    <input type="submit" name="delete_dep" value="Delete"/>
 </section>
 </form>
 </body>

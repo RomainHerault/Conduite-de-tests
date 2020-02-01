@@ -25,7 +25,14 @@ class Store(models.Model):
 class Product(models.Model):
     quantity = models.IntegerField()
     name = models.CharField(max_length=150)
-    price = models.IntegerField()
+    price = models.FloatField()
     ref = models.CharField(max_length=150)
 
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
+    def isNotValid(self):
+        if not isinstance(self.quantity, int):
+            return True,"Quantité invalide"
+        if not isinstance(self.price, float):
+            return True,"Prix invalide"
+
+        return False,"OK"
