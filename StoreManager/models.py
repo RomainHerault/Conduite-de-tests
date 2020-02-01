@@ -15,6 +15,16 @@ class Department(models.Model):
 
     store = models.ForeignKey('Store', on_delete=models.CASCADE)
 
+    def doesNameExists(self):
+        sameNameDep = Department.objects.filter(name = self.name)
+        if len(sameNameDep) is not 0:
+            if len(sameNameDep) is not 1:
+                return True, "département déjà existant"
+            else:
+                if sameNameDep[0].id is not self.id :
+                    return True, "département déjà existant"
+        return False,"OK"
+
 
 class Store(models.Model):
     name = models.CharField(max_length=150)

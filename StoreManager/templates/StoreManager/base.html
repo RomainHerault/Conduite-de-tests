@@ -31,7 +31,12 @@
             <td> <div contenteditable> <input type="number" name="price_product" value="{{ d.price }}"> </div> </td>
             <td> <div contenteditable> <input type="number" name="quantity_product" value="{{ d.quantity }}"> </div> </td>
             <td> <div contenteditable> <input type="text" name="ref_product" value="{{ d.ref }}"> </div> </td>
-            <td> {{ d.department.name }}</td>
+            <td> {% if superuser %}
+                    <div contenteditable> <input type="text" name="department" value="{{ d.department.name }}"> </div>
+                {% else %}
+                    {{ d.department.name }}
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
