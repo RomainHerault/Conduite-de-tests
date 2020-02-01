@@ -1,11 +1,3 @@
-import os
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
-
-import django
-
-django.setup()
-
 from django.contrib.auth.models import User
 from StoreManager.models import Employee, Department, Store, Product
 

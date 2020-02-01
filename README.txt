@@ -10,8 +10,17 @@ Installation
 -Se déplacer à la racine du projet "Conduite-de-tests"
 -Dans un shell exécuter la commande "python3 manage.py makemigrations"
 -Dans un shell exécuter la commande "python3 manage.py migrate"
+
 -Se déplacer dans le dossier "setup"
--Dans un shell exécuté la commande "python3 populate_database.py"
+-Dans un shell exécuter la commande "python3 populate_database.py"
+
+(En cas d'erreur :
+Si il y a une erreur à ce moment, il est possible de faire une autre manipulation :
+-faire "pip install ipython"
+- exécuter "python3 manage.py shell"
+- dans ce nouveau shell, faire "%run chemin_vers_lefichier_populate_database_error.py" )
+
+
 -Se déplacer à la racine du projet "Conduite-de-tests"
 -Dans un shell exécuter la commande "python3 manage.py runserver"
 
