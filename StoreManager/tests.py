@@ -12,8 +12,44 @@ class EmployeeTests(TestCase):
         # ecrire un test avec les employees
         pass
 
+class RayonViewTest(TestCase):
+    username1 = "user1"
+    password1 = "pass1"
 
-class connexionTests(TestCase):
+    username2 = "user2"
+    password2 = "pass2"
+
+    @classmethod
+    def setUpTestData(cls):
+        superuser = user = User.objects.create_superuser("boss", "fakemail2@mail.com", "bossmdp")
+        superuser.save()
+        store = Store(name="store", user=superuser)
+        store.save()
+        department1 = Department(name="d1", store=store)
+        department1.save()
+        department2 = Department(name="d2", store=store)
+        department2.save()
+        user1 = User.objects.create_user(cls.username1, "fakemail@mail.com", cls.password1)
+        user1.save()
+        employee1 = Employee(user=user1, phonenumber="0505050505", department=department1)
+        employee1.save()
+        user2 = User.objects.create_user(cls.username2, "fakemail@mail.com", cls.password2)
+        user2.save()
+        employee2 = Employee(user=user2, phonenumber="0505050506", department=department2)
+        employee2.save()
+
+    def test_acces_rayon_non_identifie(self):
+        reponse = self.client.get(reverse('rayon'))
+        self.assertEqual(reponse.status_code, 302)  # la requête s'est bien déroulée
+        self.assertRedirects(reponse, '/StoreManager/connexion?next=/StoreManager/rayon')
+
+    def test_acces_rayon_identifie(self):
+        self.client.login(username = self.username1, password = self.password1)
+        reponse = self.client.get(reverse('rayon'))
+        self.assertEqual(reponse.status_code, 200)  # la requête s'est bien détroulée
+        self.assertContains(reponse, "Bienvenue, "+self.username1+" !")
+
+class ConnexionViewTests(TestCase):
     username = "fakeusername"
     password = "fakepassword"
 
@@ -77,5 +113,5 @@ class connexionTests(TestCase):
         """ Teste une deconnexion"""
         reponse = self.client.get(reverse('deconnexion'))
 
-        self.assertEqual(reponse.status_code, 302)  # la requête s'est bien détroulée
+        self.assertEqual(reponse.status_code, 302)  # la requête s'est bien déroulée
         self.assertRedirects(reponse, reverse('connexion'))
