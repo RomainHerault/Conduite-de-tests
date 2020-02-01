@@ -9,6 +9,8 @@ django.setup()
 from django.contrib.auth.models import User
 from StoreManager.models import Employee, Department, Store, Product
 
+
+
 class PopulateDatabase:
     def start(self):
         self.create_super_user()
@@ -84,7 +86,5 @@ class PopulateDatabase:
 
 
 if __name__ == '__main__':
-    print("Création des données")
     populate_database = PopulateDatabase()
     populate_database.start()
-    print("Données créées")
