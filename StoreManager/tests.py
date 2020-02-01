@@ -71,6 +71,10 @@ class UnitTestsEmployee(TestCase):
 
     super_username = "superuser"
     super_password = "superpass"
+
+    employee2 = None
+
+    department3 = None
     @classmethod
     def setUpTestData(cls):
         superuser = user = User.objects.create_superuser(cls.super_username, "fakemail2@mail.com", cls.super_password)
@@ -81,26 +85,62 @@ class UnitTestsEmployee(TestCase):
         department1.save()
         department2 = Department(name="d2", store=store)
         department2.save()
+        cls.department3 = Department(name="d3", store=store)
+        cls.department3.save()
         user1 = User.objects.create_user(cls.username1, "fakemail@mail.com", cls.password1)
         user1.save()
         employee1 = Employee(user=user1, phonenumber="0505050505", department=department1)
         employee1.save()
         user2 = User.objects.create_user(cls.username2, "fakemail@mail.com", cls.password2)
         user2.save()
-        employee2 = Employee(user=user2, phonenumber="0505050506", department=department2)
-        employee2.save()
+        cls.employee2 = Employee(user=user2, phonenumber="0505050506", department=department2)
+        cls.employee2.save()
 
     def test_doesNameExists_correct(self):
         result, error_msg = self.employee2.doesNameExists()
         self.assertEqual(False, result)
 
     def test_doesNameExists_incorrect(self):
-        user = User.objects.create_user(self.username1,"mail@mail;com", "pass")
-        new_emp = Employee(user = user, "0505050505", )
+
+        self.employee2.user.username = self.username1
+        result, error_msg = self.employee2.doesNameExists()
+        self.assertEqual(True, result)
+
+    def test_doesNameExists_correct_after_modify(self):
+        self.employee2.user.username = "newName"
         result, error_msg = self.employee2.doesNameExists()
         self.assertEqual(False, result)
 
+class UnitTestsDepartment(TestCase):
+    dep1_name = "d1"
+    department3 = None
+    @classmethod
+    def setUpTestData(cls):
+        superuser = user = User.objects.create_superuser("super", "fakemail2@mail.com", "mdp")
+        superuser.save()
+        store = Store(name="store", user=superuser)
+        store.save()
+        department1 = Department(name=cls.dep1_name, store=store)
+        department1.save()
+        department2 = Department(name="d2", store=store)
+        department2.save()
+        cls.department3 = Department(name="d3", store=store)
+        cls.department3.save()
 
+
+    def test_doesNameExists_correct(self):
+        result, error_msg = self.department3.doesNameExists()
+        self.assertEqual(False, result)
+
+    def test_doesNameExists_incorrect(self):
+        self.department3.name = self.dep1_name
+        result, error_msg = self.department3.doesNameExists()
+        self.assertEqual(True, result)
+
+    def test_doesNameExists_correct_after_Modify(self):
+        self.department3.name = "new_name"
+        result, error_msg = self.department3.doesNameExists()
+        self.assertEqual(False, result)
 
 class RayonViewTest(TestCase):
     username1 = "user1"
