@@ -6,9 +6,18 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phonenumber = models.IntegerField()
+    phonenumber = models.CharField(max_length=20)
     department = models.ForeignKey('Department', null=None, on_delete=models.CASCADE)
 
+    def doesNameExists(self):
+        sameNameUser = User.objects.filter(username=self.user.username)
+        if len(sameNameUser) is not 0:
+            if len(sameNameUser) is not 1:
+                return True, "nom d'utilisateur déjà existant"
+            else:
+                if sameNameUser[0].id is not self.user.id :
+                    return True, "nom d'utilisateur déjà existant"
+        return False,"OK"
 
 class Department(models.Model):
     name = models.CharField(max_length=150)

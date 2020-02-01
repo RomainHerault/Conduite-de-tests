@@ -1,21 +1,9 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <title>{% block title %}Store Manager{% endblock %}</title>
-    <link rel="stylesheet" href="{%static 'StoreManager/css/base.css'%}" type="text/css">
-</head>
-<body>
-<header>{% block header %}Bienvenue, {{username}} !{% endblock %}</header>
-
-{% if error%}
-<p><strong>Erreur : {{ error_message }}</strong></p>
-{% endif %}
+{% extends "StoreManager\base.html" %}
+{%block tab %}
 
 <form method="post">
 {% csrf_token %}
 <section id="content">
-    {% block content %}
     <div style="overflow-x:auto;">
     <table >
         <tr>
@@ -32,7 +20,6 @@
         {% endfor %}
     </table>
         </div>
-    {% endblock %}
 
 </section>
 <section id="button">
@@ -41,5 +28,4 @@
     <input type="submit" name="delete_dep" value="Delete"/>
 </section>
 </form>
-</body>
-</html>
+{% endblock %}
