@@ -16,6 +16,9 @@ class Departement(unittest.TestCase):
         '''
         Test to modify the first departement name of departement page to 'football de rue'
         '''
+
+        self.connexion()  # connect as admin
+
         driver = self.driver
         driver.get("http://127.0.0.1:8000/StoreManager/departement")
 
@@ -39,7 +42,32 @@ class Departement(unittest.TestCase):
 
         self.assertNotEqual(old_text, new_text)  # we check if the departement name is correctly modify
 
+    def connexion(self):
+        driver = self.driver
+        driver.get("http://127.0.0.1:8000/StoreManager/departement")
+
+        element = driver.find_element_by_xpath('//*[@id="id_username"]')
+        element.send_keys('admin')
+
+        element = driver.find_element_by_xpath('//*[@id="id_password"]')
+        element.send_keys('password')
+
+        element = driver.find_element_by_xpath('/html/body/form/input[2]').click()
+
     def tearDown(self):
+        driver = self.driver
+
+        element = driver.find_element_by_css_selector(
+            '#content > div > table > tbody > tr:nth-child(2) > td:nth-child(2) > div > input[type=text]')  # find input text element
+
+        new_text = "football de rue"
+        driver.execute_script("arguments[0].setAttribute('value', '" + new_text + "')", element)  # set new value
+
+        driver.find_element_by_xpath(
+            '//*[@id="content"]/div/table/tbody/tr[2]/td[1]/input').click()  # click on checkbox
+
+        driver.find_element_by_xpath('//*[@id="button"]/input[2]').click()  # click on modify button
+
         self.driver.close()
 
 
