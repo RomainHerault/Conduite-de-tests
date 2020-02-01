@@ -12,6 +12,8 @@ Installation
 -Dans un shell exécuter la commande "python3 manage.py migrate"
 -Se déplacer dans le dossier "setup"
 -Dans un shell exécuté la commande "python3 populate_database.py"
+-Se déplacer à la racine du projet "Conduite-de-tests"
+-Dans un shell exécuter la commande "python3 manage.py runserver"
 
 Utilisations
 Se connecter : http://127.0.0.1:8000/StoreManager/connexion
