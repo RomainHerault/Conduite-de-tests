@@ -31,6 +31,7 @@
             <td> <div contenteditable> <input type="text" name="password_user" value="{{ d.user.password }}"> </div> </td>
             <td> <div contenteditable> <input type="number" name="phone_user" value="{{ d.phonenumber }}"> </div> </td>
             <td> <div contenteditable> <input type="text" name="email_user" value="{{ d.user.email }}"> </div> </td>
+            <td> <div contenteditable> <input type="text" name="dept_user" value="{{ d.department.name }}"> </div> </td>
             <td>  <input type="text" name="datejoined_user" value="{{ d.user.date_joined }}">  </td>
         </tr>
         {% endfor %}

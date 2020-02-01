@@ -126,7 +126,7 @@ def departement(request):
 
 def emloyee(request):
     if request.method == 'POST' and request.POST.get('add_user'):  # check if post request comes from correct button
-        new_user = User(username="new_user_to_rename", password="password", email="")
+        new_user = User(username="default_username", password="password", email="")
         new_user.save()
         new_emp = Employee(user=new_user, phonenumber=0, department_id=1)
         new_emp.save()
@@ -142,6 +142,7 @@ def emloyee(request):
         password = request.POST.getlist('password_user')
         phone = request.POST.getlist('phone_user')
         email = request.POST.getlist('email_user')
+        dep = request.POST.getlist('dept_user')
 
         for emp_id in selected_emp_id:
             emp = Employee.objects.get(pk=emp_id)
@@ -149,6 +150,8 @@ def emloyee(request):
             emp.user.password = password[id_employees.index(int(emp_id))]
             emp.phonenumber = int(phone[id_employees.index(int(emp_id))])
             emp.user.email = email[id_employees.index(int(emp_id))]
+            emp.department = Department.objects.get(
+                name=dep[id_employees.index(int(emp_id))])  # todo check if dep exist
             emp.user.save()
             emp.save()
 
@@ -156,17 +159,14 @@ def emloyee(request):
             'delete_user'):  # check if post request comes from correct button
 
         selected_emp = request.POST.getlist('action_user')
-        employees_to_delete = Employee.objects.filter(id__in=selected_emp).select_related().delete()
+        employees_to_delete = Employee.objects.filter(id__in=selected_emp).select_related()
 
-        # for employee in employees_to_delete:
-        #     employee.user.delete()
-        #     employee.delete()
+        for employee in employees_to_delete:
+            employee.user.delete()
+            employee.delete()
 
-
-    header = ['Action', 'Username', 'Password', 'PhoneNumber', 'Email', 'DateJoined']
+    header = ['Action', 'Username', 'Password', 'PhoneNumber', 'Email', 'Departement', 'DateJoined']
     query_employee_results = Employee.objects.all().select_related()
-
-    print(query_employee_results)
 
     return render(request, 'StoreManager/employee.html',
                   {'username': 'Jean Michel', 'header': header, 'data': query_employee_results})
