@@ -1,5 +1,14 @@
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+
+import django
+
+django.setup()
+
 from django.contrib.auth.models import User
 from StoreManager.models import Employee, Department, Store, Product
+
 
 
 class PopulateDatabase:
@@ -11,7 +20,7 @@ class PopulateDatabase:
         self.create_product()
 
     def create_super_user(self):
-        self.superuser = User.objects.create_superuser("superuser", "fakemail2@mail.com", "mdp")
+        self.superuser = User.objects.create_superuser("admin", "fakemail2@mail.com", "admin")
         self.superuser.save()
 
     def create_store(self):
