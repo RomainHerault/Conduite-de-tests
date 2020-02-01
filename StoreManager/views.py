@@ -90,11 +90,12 @@ def departement(request):
 
         for dep_id in selected_dep_id:
             dep = Department.objects.get(pk=dep_id)
-            dep.name = dep_name[id_deps.index(int(dep_id))] # TODO check if dep name already exist
+            dep.name = dep_name[id_deps.index(int(dep_id))]  # TODO check if dep name already exist
             dep.save()
 
             if username[id_deps.index(int(dep_id))]:
-                user = User.objects.get(username=username[id_deps.index(int(dep_id))]) # todo check if user not already assigned or does not exist
+                user = User.objects.get(username=username[
+                    id_deps.index(int(dep_id))])  # todo check if user not already assigned or does not exist
                 employee = Employee.objects.get(user=user)
                 employee.department = dep
                 employee.save()
@@ -121,6 +122,54 @@ def departement(request):
 
     return render(request, 'StoreManager/departement.html',
                   {'username': 'Jean Michel', 'header': header, 'data': custom_data})
+
+
+def emloyee(request):
+    if request.method == 'POST' and request.POST.get('add_user'):  # check if post request comes from correct button
+        new_user = User(username="new_user_to_rename", password="password", email="")
+        new_user.save()
+        new_emp = Employee(user=new_user, phonenumber=0, department_id=1)
+        new_emp.save()
+    elif request.method == 'POST' and request.POST.get(
+            'modify_user'):  # check if post request comes from correct button
+
+        selected_emp_id = request.POST.getlist('action_user')
+
+        id_employees = list(Employee.objects.values_list('id', flat=True))
+        id_employees.sort()
+
+        username = request.POST.getlist('name_user')
+        password = request.POST.getlist('password_user')
+        phone = request.POST.getlist('phone_user')
+        email = request.POST.getlist('email_user')
+
+        for emp_id in selected_emp_id:
+            emp = Employee.objects.get(pk=emp_id)
+            emp.user.username = username[id_employees.index(int(emp_id))]  # TODO check if  username already exist
+            emp.user.password = password[id_employees.index(int(emp_id))]
+            emp.phonenumber = int(phone[id_employees.index(int(emp_id))])
+            emp.user.email = email[id_employees.index(int(emp_id))]
+            emp.user.save()
+            emp.save()
+
+    elif request.method == 'POST' and request.POST.get(
+            'delete_user'):  # check if post request comes from correct button
+
+        selected_emp = request.POST.getlist('action_user')
+        employees_to_delete = Employee.objects.filter(id__in=selected_emp).select_related().delete()
+
+        # for employee in employees_to_delete:
+        #     employee.user.delete()
+        #     employee.delete()
+
+
+    header = ['Action', 'Username', 'Password', 'PhoneNumber', 'Email', 'DateJoined']
+    query_employee_results = Employee.objects.all().select_related()
+
+    print(query_employee_results)
+
+    return render(request, 'StoreManager/employee.html',
+                  {'username': 'Jean Michel', 'header': header, 'data': query_employee_results})
 
 
 def connexion(request):
