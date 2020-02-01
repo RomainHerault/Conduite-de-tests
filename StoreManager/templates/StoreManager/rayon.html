@@ -1,29 +1,9 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <title>{% block title %}Store Manager{% endblock %}</title>
-    <link rel="stylesheet" href="{%static 'StoreManager/css/base.css'%}" type="text/css">
-</head>
-<body>
-{% block header %}
-    <header>Bienvenue, {{username}} !
+{% extends "StoreManager\base.html" %}
+{%block tab %}
 
-    <a href="{% url "deconnexion" %}">
-    Se déconnecter
-</a></header>
-{% endblock %}
-{% block error %}
-    {% if error%}
-    <p><strong>Erreur : {{ error_message }}</strong></p>
-    {% endif %}
-{% endblock %}
-
-{% block tab %}
 <form method="post">
 {% csrf_token %}
 <section id="content">
-
     <div style="overflow-x:auto;">
     <table >
         <tr>
@@ -48,7 +28,6 @@
         {% endfor %}
     </table>
     </div>
-
 </section>
 <section id="button">
     <input type="submit" name="add_product" value="Add"/>
@@ -56,6 +35,5 @@
     <input type="submit" name="delete_product" value="Delete"/>
 </section>
 </form>
-!{% endblock %}
-</body>
-</html>
+
+{% endblock %}
