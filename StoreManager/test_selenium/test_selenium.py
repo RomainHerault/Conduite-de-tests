@@ -60,7 +60,7 @@ class Departement(unittest.TestCase):
         element = driver.find_element_by_css_selector(
             '#content > div > table > tbody > tr:nth-child(2) > td:nth-child(2) > div > input[type=text]')  # find input text element
 
-        new_text = "football de rue"
+        new_text = "football"
         driver.execute_script("arguments[0].setAttribute('value', '" + new_text + "')", element)  # set new value
 
         driver.find_element_by_xpath(

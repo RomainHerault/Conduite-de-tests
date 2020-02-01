@@ -119,7 +119,10 @@ def departement(request):
             id_deps = list(Department.objects.values_list('id', flat=True))
             id_deps.sort()
 
-            dep_name = request.POST.getlist('dep')
+            print(id_deps)
+
+            dep_name = request.POST.getlist('dep_name')
+
             username = request.POST.getlist('username')
 
             for dep_id in selected_dep_id:
