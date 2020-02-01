@@ -1,0 +1,39 @@
+{% extends "StoreManager\base.html" %}
+
+
+{%block tab %}
+<section id="content">
+    <div style="overflow-x:auto;">
+        <table>
+            <tr>
+                {% for h in header %}
+                <th>{{h}}</th>
+                {% endfor %}
+            </tr>
+            {% for d in data %}
+            <tr>
+                <td><input type="checkbox" name="action_product" value="{{ d.id }}"/>&nbsp;</td>
+                <td>
+                    <div contenteditable><input type="text" name="name_product" value="{{ d.name }}"></div>
+                </td>
+                <td>
+                    <div contenteditable><input type="number" name="price_product" value="{{ d.price }}"></div>
+                </td>
+                <td>
+                    <div contenteditable><input type="number" name="quantity_product" value="{{ d.quantity }}"></div>
+                </td>
+                <td>
+                    <div contenteditable><input type="text" name="ref_product" value="{{ d.ref }}"></div>
+                </td>
+                <td> {% if superuser %}
+                    <div contenteditable><input type="text" name="department" value="{{ d.department.name }}"></div>
+                    {% else %}
+                    {{ d.department.name }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</section>
+{% endblock %}

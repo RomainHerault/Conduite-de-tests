@@ -17,7 +17,7 @@ def index(request):
 
 
 @login_required
-def rayon(request):
+def produit(request):
     error = False
     error_message = ""
     superuser = request.user.is_superuser
@@ -94,13 +94,13 @@ def rayon(request):
 
     header = ['Action', 'Nom', 'Prix', 'Quantité', 'Ref', 'Nom Rayon']
     query_results = Product.objects.all()  # TODO à modifier en fonction des droits du user
-    return render(request, 'StoreManager/rayon.html',
+    return render(request, 'StoreManager/produit.html',
                   {'username': request.user.username, 'header': header, 'data': query_results, 'error': error,
                    'error_message': error_message, 'superuser': superuser})
 
 
 @login_required
-def departement(request):
+def rayon(request):
     error = False
     error_message = ""
     if request.user.is_superuser:
@@ -118,8 +118,6 @@ def departement(request):
 
             id_deps = list(Department.objects.values_list('id', flat=True))
             id_deps.sort()
-
-            print(id_deps)
 
             dep_name = request.POST.getlist('dep_name')
 
@@ -149,7 +147,7 @@ def departement(request):
             selected_dep = request.POST.getlist('action_dep')  # get id of selected products
             Department.objects.filter(id__in=selected_dep).delete()  # delete selected product
 
-        header = ['Action', 'Departement', "Nom d'utilisateur"]
+        header = ['Action', 'Rayon', "Nom d'utilisateur"]
         query_employee_results = Employee.objects.all().select_related()
         query_dept = Department.objects.all()
 
@@ -161,7 +159,7 @@ def departement(request):
                     custom_data.append([dept, emp])
             if custom_data[-1][0].name != dept.name:
                 custom_data.append([dept])
-        return render(request, 'StoreManager/departement.html',
+        return render(request, 'StoreManager/rayon.html',
                       {'username': request.user.username, 'header': header, 'data': custom_data, 'error': error,
                        'error_message': error_message})
     else:
@@ -229,7 +227,7 @@ def employe(request):
                 employee.user.delete()
                 employee.delete()
 
-        header = ['Action', "Nom d'utilisateur", 'Mot de passe', 'Téléphone', 'Email', 'Departement',
+        header = ['Action', "Nom d'utilisateur", 'Mot de passe', 'Téléphone', 'Email', 'Rayon',
                   'Date de création']
         query_employee_results = Employee.objects.all().select_related()
 
