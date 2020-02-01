@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from StoreManager.models import Product
 from StoreManager.models import Employee
@@ -14,13 +15,14 @@ def index(request):
     return HttpResponse("Coucou Djangooooooooooooooooo !")
 
 
+@login_required
 def rayon(request):
     error = False
     error_message = ""
+    print(request.user.employee)
     if request.method == 'POST' and request.POST.get('add_product'):  # check if post request comes from correct button
-        new_product = Product(name="", quantity=0, ref="", price=0,
-                              department_id=1)  # TODO dept id à modifier en fonction des droits du user
-        error, error_message = new_product.isNotValid()
+        new_product = Product(name="", quantity=0, ref="", price=0.0,
+                              department_id=request.user.employee.department.id)
         if not error:
             new_product.save()
 
@@ -40,20 +42,30 @@ def rayon(request):
         for product_id in selected_products_id:
 
             product = Product.objects.get(pk = product_id)
-            product.name = name_products[id_products.index(int(product_id))]
-            product.price = price_products[id_products.index(int(product_id))]
-            product.quantity = quantity_products[id_products.index(int(product_id))]
-            product.ref = ref_products[id_products.index(int(product_id))]
-
-            error, error_message = product.isNotValid()
-            if not error :
-                product.save()
+            if product.department.id is not request.user.employee.department.id :
+                error = True,
+                error_message = "Vous ne pouvez pas modifier tous les produits séléctionnés (mauvais département)"
+            else :
+                product.name = name_products[id_products.index(int(product_id))]
+                product.price = price_products[id_products.index(int(product_id))]
+                product.quantity = quantity_products[id_products.index(int(product_id))]
+                product.ref = ref_products[id_products.index(int(product_id))]
+                error, error_message = product.doesRefExists()
+                if not error:
+                    error, error_message = product.isNotValid()
+                    if not error:
+                        product.save()
 
     elif request.method == 'POST' and request.POST.get(
             'delete_product'):  # check if post request comes from correct button
 
         selected_products = request.POST.getlist('action_product')  # get id of selected products
-        Product.objects.filter(id__in=selected_products).delete()  # delete selected product
+        for product in Product.objects.filter(id__in=selected_products):
+            if product.department.id is not request.user.employee.department.id:
+                error = True,
+                error_message = "Vous ne pouvez pas supprimer tous les produits séléctionnés (mauvais département)"
+            else:
+                product.delete()
 
     header = ['Action', 'Nom', 'Prix', 'Quantité', 'Ref', 'Nom Rayon']
     query_results = Product.objects.all()  # TODO à modifier en fonction des droits du user
@@ -110,6 +122,10 @@ def connexion(request):
             user = authenticate(username=username, password=password)  # Nous vérifions si les données sont correctes
             if user:  # Si l'objet renvoyé n'est pas None
                 login(request, user)  # nous connectons l'utilisateur
+                if 'next' in request.GET:
+                    next = request.GET['next']
+                    if next is not None :
+                        return redirect(next)
             else:  # sinon une erreur sera affichée
                 error = True
     else:
