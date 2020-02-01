@@ -142,7 +142,7 @@ class UnitTestsDepartment(TestCase):
         result, error_msg = self.department3.doesNameExists()
         self.assertEqual(False, result)
 
-class RayonViewTest(TestCase):
+class ProductViewTest(TestCase):
     username1 = "user1"
     password1 = "pass1"
 
@@ -171,21 +171,21 @@ class RayonViewTest(TestCase):
         employee2 = Employee(user=user2, phonenumber="0505050506", department=department2)
         employee2.save()
 
-    def test_acces_rayon_non_identifie(self):
-        reponse = self.client.get(reverse('rayon'))
+    def test_acces_produit_non_identifie(self):
+        reponse = self.client.get(reverse('produit'))
         self.assertEqual(reponse.status_code, 302)  # la requête s'est bien déroulée
-        self.assertRedirects(reponse, '/StoreManager/connexion?next=/StoreManager/rayon')
+        self.assertRedirects(reponse, '/StoreManager/connexion?next=/StoreManager/produit')
 
-    def test_acces_rayon_identifie(self):
+    def test_acces_produit_identifie(self):
         self.client.login(username = self.username1, password = self.password1)
-        reponse = self.client.get(reverse('rayon'))
+        reponse = self.client.get(reverse('produit'))
         self.assertEqual(reponse.status_code, 200)  # la requête s'est bien déroulée
         self.assertContains(reponse, "Bienvenue, "+self.username1+" !")
 
     def test_ajoute_produit(self):
         self.client.login(username=self.username1, password=self.password1)
         num_product = len(Product.objects.all())
-        reponse = self.client.post(reverse('rayon'),{'add': ['Ajouter une ligne']})
+        reponse = self.client.post(reverse('produit'),{'add': ['Ajouter une ligne']})
         self.assertEqual(reponse.status_code, 200)  # la requête s'est bien déroulée
         self.assertEqual(num_product+1, len(Product.objects.all()))
 
