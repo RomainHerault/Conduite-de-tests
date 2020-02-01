@@ -4,7 +4,7 @@ from django.test import TestCase
 # Create your tests here.
 from django.urls import reverse
 
-from StoreManager.models import Employee, Department, Store
+from StoreManager.models import Employee, Department, Store, Product
 
 
 class EmployeeTests(TestCase):
@@ -19,9 +19,12 @@ class RayonViewTest(TestCase):
     username2 = "user2"
     password2 = "pass2"
 
+    super_username = "superuser"
+    super_password = "superpass"
+
     @classmethod
     def setUpTestData(cls):
-        superuser = user = User.objects.create_superuser("boss", "fakemail2@mail.com", "bossmdp")
+        superuser = user = User.objects.create_superuser(cls.super_username, "fakemail2@mail.com", cls.super_password)
         superuser.save()
         store = Store(name="store", user=superuser)
         store.save()
@@ -46,8 +49,16 @@ class RayonViewTest(TestCase):
     def test_acces_rayon_identifie(self):
         self.client.login(username = self.username1, password = self.password1)
         reponse = self.client.get(reverse('rayon'))
-        self.assertEqual(reponse.status_code, 200)  # la requête s'est bien détroulée
+        self.assertEqual(reponse.status_code, 200)  # la requête s'est bien déroulée
         self.assertContains(reponse, "Bienvenue, "+self.username1+" !")
+
+    def test_ajoute_produit(self):
+        self.client.login(username=self.username1, password=self.password1)
+        num_product = len(Product.objects.all())
+        reponse = self.client.post(reverse('rayon'),{'add_product': ['Ajouter une ligne']})
+        self.assertEqual(reponse.status_code, 200)  # la requête s'est bien déroulée
+        self.assertEqual(num_product+1, len(Product.objects.all()))
+
 
 class ConnexionViewTests(TestCase):
     username = "fakeusername"

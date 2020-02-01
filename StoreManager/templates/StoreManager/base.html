@@ -13,15 +13,17 @@
     Se déconnecter
 </a></header>
 {% endblock %}
+
 {% block error %}
     {% if error%}
     <p><strong>Erreur : {{ error_message }}</strong></p>
     {% endif %}
 {% endblock %}
 
-{% block tab %}
+
 <form method="post">
 {% csrf_token %}
+    {% block tab %}
 <section id="content">
 
     <div style="overflow-x:auto;">
@@ -50,12 +52,13 @@
     </div>
 
 </section>
+    !{% endblock %}
 <section id="button">
-    <input type="submit" name="add_product" value="Add"/>
-    <input type="submit" name="modify_product" value="Modify"/>
-    <input type="submit" name="delete_product" value="Delete"/>
+    <input type="submit" name="add" value="Ajouter une ligne"/>
+    <input type="submit" name="modify" value="Modifier les sélections"/>
+    <input type="submit" name="delete" value="Supprimer les sélections"/>
 </section>
 </form>
-!{% endblock %}
+
 </body>
 </html>

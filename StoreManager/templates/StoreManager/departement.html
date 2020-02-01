@@ -1,8 +1,6 @@
 {% extends "StoreManager\base.html" %}
-{%block tab %}
 
-<form method="post">
-{% csrf_token %}
+{%block tab %}
 <section id="content">
     <div style="overflow-x:auto;">
     <table >
@@ -20,12 +18,5 @@
         {% endfor %}
     </table>
         </div>
-
 </section>
-<section id="button">
-    <input type="submit" name="add_dep" value="Add"/>
-    <input type="submit" name="modify_dep" value="Modify"/>
-    <input type="submit" name="delete_dep" value="Delete"/>
-</section>
-</form>
 {% endblock %}

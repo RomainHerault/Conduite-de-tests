@@ -21,23 +21,28 @@ def rayon(request):
     error = False
     error_message = ""
     superuser = request.user.is_superuser
-    if request.method == 'POST' and request.POST.get('add_product'):  # check if post request comes from correct button
-        if superuser:
-            try:
-                default_dep = Department.objects.get(name="")
-            except:
-                default_dep = Department(name="", store_id="1")
-                default_dep.save()
-            new_product = Product(name="", quantity=0, ref="", price=0.0,
-                                  department_id=default_dep.id)
-        else:
-            new_product = Product(name="", quantity=0, ref="", price=0.0,
-                                  department_id=request.user.employee.department.id)
-        if not error:
-            new_product.save()
+    if request.method == 'POST' and request.POST.get('add'):  # check if post request comes from correct button
+        print(request.POST)
+        if not Product.objects.filter(name="").exists():
+            if superuser:
+                try:
+                    default_dep = Department.objects.get(name="")
+                except:
+                    default_dep = Department(name="", store_id="1")
+                    default_dep.save()
+                new_product = Product(name="", quantity=0, ref="", price=0.0,
+                                      department_id=default_dep.id)
+            else:
+                new_product = Product(name="", quantity=0, ref="", price=0.0,
+                                      department_id=request.user.employee.department.id)
+            if not error:
+                new_product.save()
+        else :
+            error = True,
+            error_message = "un employé par défaut existe déjà"
 
     elif request.method == 'POST' and request.POST.get(
-            'modify_product'):  # check if post request comes from correct button
+            'modify'):  # check if post request comes from correct button
 
         selected_products_id = request.POST.getlist('action_product')
 
@@ -78,7 +83,7 @@ def rayon(request):
                             product.save()
 
     elif request.method == 'POST' and request.POST.get(
-            'delete_product'):  # check if post request comes from correct button
+            'delete'):  # check if post request comes from correct button
 
         selected_products = request.POST.getlist('action_product')  # get id of selected products
         for product in Product.objects.filter(id__in=selected_products):
@@ -100,9 +105,14 @@ def departement(request):
     error = False
     error_message = ""
     if request.user.is_superuser:
-        if request.method == 'POST' and request.POST.get('add_dep'):  # check if post request comes from correct button
-            new_dep = Department(name="", store_id=1)
-            new_dep.save()
+        if request.method == 'POST' and request.POST.get('add'):  # check if post request comes from correct button
+            if not Department.objects.filter(name="").exists():
+                new_dep = Department(name="", store_id=1)
+                new_dep.save()
+            else :
+                print("coucou")
+                error = True
+                error_message = "un département par défaut existe déjà"
         elif request.method == 'POST' and request.POST.get(
                 'modify_dep'):  # check if post request comes from correct button
 
@@ -111,7 +121,7 @@ def departement(request):
             id_deps = list(Department.objects.values_list('id', flat=True))
             id_deps.sort()
 
-            dep_name = request.POST.getlist('dep_name')
+            dep_name = request.POST.getlist('dep')
             username = request.POST.getlist('username')
 
             for dep_id in selected_dep_id:
@@ -133,7 +143,7 @@ def departement(request):
 
 
         elif request.method == 'POST' and request.POST.get(
-                'delete_dep'):  # check if post request comes from correct button
+                'delete'):  # check if post request comes from correct button
 
             selected_dep = request.POST.getlist('action_dep')  # get id of selected products
             Department.objects.filter(id__in=selected_dep).delete()  # delete selected product
@@ -150,7 +160,8 @@ def departement(request):
                     custom_data.append([dept, emp])
             if custom_data[-1][0].name != dept.name:
                 custom_data.append([dept])
-
+        print(error)
+        print(error_message)
         return render(request, 'StoreManager/departement.html',
                       {'username': request.user.username, 'header': header, 'data': custom_data, 'error': error,
                        'error_message': error_message})
@@ -164,7 +175,7 @@ def employe(request):
     error_message = ""
 
     if request.user.is_superuser:
-        if request.method == 'POST' and request.POST.get('add_user'):  # check if post request comes from correct button
+        if request.method == 'POST' and request.POST.get('add'):  # check if post request comes from correct button
             if not User.objects.filter(username = "default_username").exists() :
                 new_user = User.objects.create_user(username="default_username", password="password", email="")
                 new_user.save()
@@ -178,7 +189,7 @@ def employe(request):
             else:
                 error, error_message = True, "un employé par défaut existe déjà"
         elif request.method == 'POST' and request.POST.get(
-                'modify_user'):  # check if post request comes from correct button
+                'modify'):  # check if post request comes from correct button
 
             selected_emp_id = request.POST.getlist('action_user')
 
@@ -210,7 +221,7 @@ def employe(request):
 
 
         elif request.method == 'POST' and request.POST.get(
-                'delete_user'):  # check if post request comes from correct button
+                'delete'):  # check if post request comes from correct button
 
             selected_emp = request.POST.getlist('action_user')
             employees_to_delete = Employee.objects.filter(id__in=selected_emp).select_related()
