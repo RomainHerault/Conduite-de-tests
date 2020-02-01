@@ -22,7 +22,6 @@ def rayon(request):
     error_message = ""
     superuser = request.user.is_superuser
     if request.method == 'POST' and request.POST.get('add'):  # check if post request comes from correct button
-        print(request.POST)
         if not Product.objects.filter(name="").exists():
             if superuser:
                 try:
@@ -110,7 +109,6 @@ def departement(request):
                 new_dep = Department(name="", store_id=1)
                 new_dep.save()
             else :
-                print("coucou")
                 error = True
                 error_message = "un département par défaut existe déjà"
         elif request.method == 'POST' and request.POST.get(
@@ -160,8 +158,6 @@ def departement(request):
                     custom_data.append([dept, emp])
             if custom_data[-1][0].name != dept.name:
                 custom_data.append([dept])
-        print(error)
-        print(error_message)
         return render(request, 'StoreManager/departement.html',
                       {'username': request.user.username, 'header': header, 'data': custom_data, 'error': error,
                        'error_message': error_message})
