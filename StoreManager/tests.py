@@ -7,10 +7,100 @@ from django.urls import reverse
 from StoreManager.models import Employee, Department, Store, Product
 
 
-class EmployeeTests(TestCase):
-    def test_truc_avec_employee(self):
-        # ecrire un test avec les employees
-        pass
+class UnitTestsProduct(TestCase):
+    department1 = None
+    @classmethod
+    def setUpTestData(cls):
+        superuser = user = User.objects.create_superuser("superuser", "fakemail2@mail.com", "mdp")
+        superuser.save()
+        store = Store(name="store", user=superuser)
+        store.save()
+        cls.department1 = Department(name="d1", store=store)
+        cls.department1.save()
+    def test_isNotValid_correct(self):
+        product = Product(quantity = 10, name = "Produit1", price = 10.2, ref = "Ref")
+        result, error_msg = product.isNotValid()
+        self.assertEqual(False, result)
+
+    def test_isNotValid_quantity_neg(self):
+        product = Product(quantity = -10, name = "Produit1", price = 10.2, ref = "Ref")
+        result, error_msg = product.isNotValid()
+        self.assertEqual(True, result)
+
+    def test_isNotValid_quantity_string(self):
+        product = Product(quantity = "coucou", name = "Produit1", price = 10.2, ref = "Ref")
+        result, error_msg = product.isNotValid()
+        self.assertEqual(True, result)
+
+    def test_isNotValid_name_empty(self):
+        product = Product(quantity = 10, name = "", price = 10.2, ref = "Ref")
+        result, error_msg = product.isNotValid()
+        self.assertEqual(True, result)
+
+    def test_isNotValid_ref_empty(self):
+        product = Product(quantity = 10, name = "Produit1", price = 10.2, ref = "")
+        result, error_msg = product.isNotValid()
+        self.assertEqual(True, result)
+
+    def test_doesRefExists_correct(self):
+        product = Product(quantity = 10, name = "Produit1", price = 10.2, ref = "Ref")
+        result, error_msg = product.doesRefExists()
+        self.assertEqual(False, result)
+
+    def test_doesRefExists_incorrect(self):
+        existing_product = Product(quantity=10, name="Produit1", price=10.2, ref="Ref", department = self.department1)
+        existing_product.save()
+        product = Product(quantity = 10, name = "Produit1", price = 10.2, ref = "Ref")
+        result, error_msg = product.doesRefExists()
+        self.assertEqual(True, result)
+
+    def test_doesRefExists_correct_when_modify(self):
+        existing_product = Product(quantity=10, name="Produit1", price=10.2, ref="Ref", department = self.department1)
+        existing_product.save()
+        existing_product.ref = "newRef"
+        result, error_msg = existing_product.doesRefExists()
+        self.assertEqual(False, result)
+
+
+class UnitTestsEmployee(TestCase):
+    username1 = "user1"
+    password1 = "pass1"
+
+    username2 = "user2"
+    password2 = "pass2"
+
+    super_username = "superuser"
+    super_password = "superpass"
+    @classmethod
+    def setUpTestData(cls):
+        superuser = user = User.objects.create_superuser(cls.super_username, "fakemail2@mail.com", cls.super_password)
+        superuser.save()
+        store = Store(name="store", user=superuser)
+        store.save()
+        department1 = Department(name="d1", store=store)
+        department1.save()
+        department2 = Department(name="d2", store=store)
+        department2.save()
+        user1 = User.objects.create_user(cls.username1, "fakemail@mail.com", cls.password1)
+        user1.save()
+        employee1 = Employee(user=user1, phonenumber="0505050505", department=department1)
+        employee1.save()
+        user2 = User.objects.create_user(cls.username2, "fakemail@mail.com", cls.password2)
+        user2.save()
+        employee2 = Employee(user=user2, phonenumber="0505050506", department=department2)
+        employee2.save()
+
+    def test_doesNameExists_correct(self):
+        result, error_msg = self.employee2.doesNameExists()
+        self.assertEqual(False, result)
+
+    def test_doesNameExists_incorrect(self):
+        user = User.objects.create_user(self.username1,"mail@mail;com", "pass")
+        new_emp = Employee(user = user, "0505050505", )
+        result, error_msg = self.employee2.doesNameExists()
+        self.assertEqual(False, result)
+
+
 
 class RayonViewTest(TestCase):
     username1 = "user1"
@@ -55,7 +145,7 @@ class RayonViewTest(TestCase):
     def test_ajoute_produit(self):
         self.client.login(username=self.username1, password=self.password1)
         num_product = len(Product.objects.all())
-        reponse = self.client.post(reverse('rayon'),{'add_product': ['Ajouter une ligne']})
+        reponse = self.client.post(reverse('rayon'),{'add': ['Ajouter une ligne']})
         self.assertEqual(reponse.status_code, 200)  # la requête s'est bien déroulée
         self.assertEqual(num_product+1, len(Product.objects.all()))
 
