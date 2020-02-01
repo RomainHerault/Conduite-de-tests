@@ -157,6 +157,54 @@ def departement(request):
         return render(request, 'StoreManager/forbiddenAccess.html', locals())
 
 
+def emloyee(request):
+    if request.method == 'POST' and request.POST.get('add_user'):  # check if post request comes from correct button
+        new_user = User(username="default_username", password="password", email="")
+        new_user.save()
+        new_emp = Employee(user=new_user, phonenumber=0, department_id=1)
+        new_emp.save()
+    elif request.method == 'POST' and request.POST.get(
+            'modify_user'):  # check if post request comes from correct button
+
+        selected_emp_id = request.POST.getlist('action_user')
+
+        id_employees = list(Employee.objects.values_list('id', flat=True))
+        id_employees.sort()
+
+        username = request.POST.getlist('name_user')
+        password = request.POST.getlist('password_user')
+        phone = request.POST.getlist('phone_user')
+        email = request.POST.getlist('email_user')
+        dep = request.POST.getlist('dept_user')
+
+        for emp_id in selected_emp_id:
+            emp = Employee.objects.get(pk=emp_id)
+            emp.user.username = username[id_employees.index(int(emp_id))]  # TODO check if  username already exist
+            emp.user.password = password[id_employees.index(int(emp_id))]
+            emp.phonenumber = int(phone[id_employees.index(int(emp_id))])
+            emp.user.email = email[id_employees.index(int(emp_id))]
+            emp.department = Department.objects.get(
+                name=dep[id_employees.index(int(emp_id))])  # todo check if dep exist
+            emp.user.save()
+            emp.save()
+
+    elif request.method == 'POST' and request.POST.get(
+            'delete_user'):  # check if post request comes from correct button
+
+        selected_emp = request.POST.getlist('action_user')
+        employees_to_delete = Employee.objects.filter(id__in=selected_emp).select_related()
+
+        for employee in employees_to_delete:
+            employee.user.delete()
+            employee.delete()
+
+    header = ['Action', 'Username', 'Password', 'PhoneNumber', 'Email', 'Departement', 'DateJoined']
+    query_employee_results = Employee.objects.all().select_related()
+
+    return render(request, 'StoreManager/employee.html',
+                  {'username': 'Jean Michel', 'header': header, 'data': query_employee_results})
+
+
 def connexion(request):
     error = False
     if request.method == "POST":

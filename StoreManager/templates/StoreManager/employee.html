@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>{% block title %}Store Manager{% endblock %}</title>
+    <link rel="stylesheet" href="{%static 'StoreManager/css/base.css'%}" type="text/css">
+</head>
+<body>
+<header>{% block header %}Bienvenue, {{username}} !{% endblock %}</header>
+
+{% if error%}
+<p><strong>Erreur : {{ error_message }}</strong></p>
+{% endif %}
+
+
+<form method="post">
+{% csrf_token %}
+<section id="content">
+    {% block content %}
+    <div style="overflow-x:auto;">
+    <table >
+        <tr>
+            {% for h in header %}
+            <th>{{h}}</th>
+            {% endfor %}
+        </tr>
+        {% for d in data %}
+        <tr>
+            <td><input type="checkbox" name="action_user" value="{{ d.id }}" />&nbsp;</td>
+            <td> <div contenteditable> <input type="text" name="name_user" value="{{ d.user.username }}"> </div> </td>
+            <td> <div contenteditable> <input type="text" name="password_user" value="{{ d.user.password }}"> </div> </td>
+            <td> <div contenteditable> <input type="number" name="phone_user" value="{{ d.phonenumber }}"> </div> </td>
+            <td> <div contenteditable> <input type="text" name="email_user" value="{{ d.user.email }}"> </div> </td>
+            <td> <div contenteditable> <input type="text" name="dept_user" value="{{ d.department.name }}"> </div> </td>
+            <td>  <input type="text" name="datejoined_user" value="{{ d.user.date_joined }}">  </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% endblock %}
+
+</section>
+<section id="button">
+    <input type="submit" name="add_user" value="Add"/>
+    <input type="submit" name="modify_user" value="Modify"/>
+    <input type="submit" name="delete_user" value="Delete"/>
+</section>
+</form>
+</body>
+</html>
