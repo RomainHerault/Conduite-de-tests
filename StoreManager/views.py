@@ -19,7 +19,6 @@ def index(request):
 def rayon(request):
     error = False
     error_message = ""
-    print(request.user.employee)
     if request.method == 'POST' and request.POST.get('add_product'):  # check if post request comes from correct button
         new_product = Product(name="", quantity=0, ref="", price=0.0,
                               department_id=request.user.employee.department.id)
@@ -70,7 +69,7 @@ def rayon(request):
     header = ['Action', 'Nom', 'Prix', 'Quantité', 'Ref', 'Nom Rayon']
     query_results = Product.objects.all()  # TODO à modifier en fonction des droits du user
     return render(request, 'StoreManager/base.html',
-                  {'username': 'Jean Michel', 'header': header, 'data': query_results, 'error': error, 'error_message' : error_message})
+                  {'username': request.user.username, 'header': header, 'data': query_results, 'error': error, 'error_message' : error_message})
 
 
 def departement(request):
