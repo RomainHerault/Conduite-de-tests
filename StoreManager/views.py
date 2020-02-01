@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 
 from StoreManager.models import Product
+from StoreManager.models import Employee
 from . import forms
 
 
@@ -14,10 +15,15 @@ def index(request):
 
 
 def rayon(request):
+    error = False
+    error_message = ""
     if request.method == 'POST' and request.POST.get('add_product'):  # check if post request comes from correct button
         new_product = Product(name="", quantity=0, ref="", price=0,
                               department_id=1)  # TODO dept id à modifier en fonction des droits du user
-        new_product.save()
+        error, error_message = new_product.isNotValid()
+        if not error:
+            new_product.save()
+
     elif request.method == 'POST' and request.POST.get(
             'modify_product'):  # check if post request comes from correct button
 
@@ -34,12 +40,14 @@ def rayon(request):
         for product_id in selected_products_id:
 
             product = Product.objects.get(pk = product_id)
-
             product.name = name_products[id_products.index(int(product_id))]
             product.price = price_products[id_products.index(int(product_id))]
             product.quantity = quantity_products[id_products.index(int(product_id))]
             product.ref = ref_products[id_products.index(int(product_id))]
-            product.save()
+
+            error, error_message = product.isNotValid()
+            if not error :
+                product.save()
 
     elif request.method == 'POST' and request.POST.get(
             'delete_product'):  # check if post request comes from correct button
@@ -50,7 +58,7 @@ def rayon(request):
     header = ['Action', 'Nom', 'Prix', 'Quantité', 'Ref', 'Nom Rayon']
     query_results = Product.objects.all()  # TODO à modifier en fonction des droits du user
     return render(request, 'StoreManager/base.html',
-                  {'username': 'Jean Michel', 'header': header, 'data': query_results})
+                  {'username': 'Jean Michel', 'header': header, 'data': query_results, 'error': error, 'error_message' : error_message})
 
 
 def departement(request):
