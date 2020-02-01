@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from StoreManager.models import Product, Department
+from StoreManager.models import Product, Department, User
 from StoreManager.models import Employee
 from . import forms
 
@@ -90,8 +90,14 @@ def departement(request):
 
         for dep_id in selected_dep_id:
             dep = Department.objects.get(pk=dep_id)
-            dep.name = dep_name[id_deps.index(int(dep_id))]
+            dep.name = dep_name[id_deps.index(int(dep_id))] # TODO check if dep name already exist
             dep.save()
+
+            if username[id_deps.index(int(dep_id))]:
+                user = User.objects.get(username=username[id_deps.index(int(dep_id))]) # todo check if user not already assigned or does not exist
+                employee = Employee.objects.get(user=user)
+                employee.department = dep
+                employee.save()
 
 
     elif request.method == 'POST' and request.POST.get(
@@ -100,7 +106,7 @@ def departement(request):
         selected_dep = request.POST.getlist('action_dep')  # get id of selected products
         Department.objects.filter(id__in=selected_dep).delete()  # delete selected product
 
-    header = ['Action', 'Departement', 'Employée(s)']
+    header = ['Action', 'Departement', 'Username']
     query_employee_results = Employee.objects.all().select_related()
     query_dept = Department.objects.all()
 
