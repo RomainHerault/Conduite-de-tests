@@ -38,7 +38,7 @@ def produit(request):
                 new_product.save()
         else :
             error = True,
-            error_message = "un employé par défaut existe déjà"
+            error_message = "un produit par défaut existe déjà"
 
     elif request.method == 'POST' and request.POST.get(
             'modify'):  # check if post request comes from correct button
@@ -110,7 +110,7 @@ def rayon(request):
                 new_dep.save()
             else :
                 error = True
-                error_message = "un département par défaut existe déjà"
+                error_message = "un rayon par défaut existe déjà"
         elif request.method == 'POST' and request.POST.get(
                 'modify'):  # check if post request comes from correct button
 
@@ -213,8 +213,11 @@ def employe(request):
                 except :
                     error, error_message = True, "département invalide"
                 if not error :
-                    emp.user.save()
-                    emp.save()
+                    if emp.department.name is "":
+                        error, error_message = True, "département invalide"
+                    if not error:
+                        emp.user.save()
+                        emp.save()
 
 
         elif request.method == 'POST' and request.POST.get(
