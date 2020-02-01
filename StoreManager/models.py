@@ -53,14 +53,18 @@ class Product(models.Model):
             self.quantity = int(self.quantity)
         except:
             return True,"Quantité invalide"
+        if self.quantity < 0:
+            return True, "Quantité invalide"
+
         try:
             self.quantity = float(self.quantity)
         except:
             return True,"Prix invalide"
+
         if self.name is "":
             return True,"Nom vide"
         if self.ref is "":
-            return True,"Référence vide"
+            return True,"Reférence vide"
         return False,"OK"
 
     def doesRefExists(self):

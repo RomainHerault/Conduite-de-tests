@@ -112,7 +112,7 @@ def departement(request):
                 error = True
                 error_message = "un département par défaut existe déjà"
         elif request.method == 'POST' and request.POST.get(
-                'modify_dep'):  # check if post request comes from correct button
+                'modify'):  # check if post request comes from correct button
 
             selected_dep_id = request.POST.getlist('action_dep')
 
