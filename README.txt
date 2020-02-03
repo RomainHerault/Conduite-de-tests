@@ -18,7 +18,8 @@ Installation
 Si il y a une erreur à ce moment, il est possible de faire une autre manipulation :
 -faire "pip install ipython"
 - exécuter "python3 manage.py shell"
-- dans ce nouveau shell, faire "%run chemin_vers_lefichier_populate_database_error.py" )
+- dans ce nouveau shell, faire %run chemin_vers_lefichier_populate_database_error
+-quitter le shell python en faisant la commande "quit()")
 
 
 -Se déplacer à la racine du projet "Conduite-de-tests"
